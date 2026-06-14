@@ -16,7 +16,10 @@ const getTweetAIReplierAppMountElement = () => {
   return mountPoint;
 };
 
-const appendReplyAppToReplyParent = (replyBtnParent: HTMLElement) => {
+const appendReplyAppToReplyParent = (
+  replyBtnParent: HTMLElement,
+  tweetText: string,
+) => {
   console.log("appending reply_app_yayyy");
   if (replyBtnParent.querySelector("#tweet-replier-root")) {
     console.log("cant append button already there");
@@ -49,7 +52,11 @@ const appendReplyAppToReplyParent = (replyBtnParent: HTMLElement) => {
   shadowRoot.append(mountPoint);
 
   const tweetReplierReactRoot = createRoot(mountPoint);
-  tweetReplierReactRoot.render(React.createElement(TweetReplier, null));
+  tweetReplierReactRoot.render(
+    React.createElement(TweetReplier, {
+      tweetText,
+    }),
+  );
 };
 
 export { appendReplyAppToReplyParent };
