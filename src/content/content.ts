@@ -11,7 +11,7 @@ const callback = (
   for (const mutation of mutationList) {
     if (mutation.type === "childList") {
       const tweetButton = document.querySelector(
-        'button[data-testid="tweetButtonInline"]',
+        'button[data-testid^="tweetButton"]',
       );
       if (tweetButton && tweetButton.textContent === "Reply") {
         console.log("reply button arrived");
@@ -19,8 +19,56 @@ const callback = (
         const tweetParent = tweetButton.parentElement;
         if (!tweetParent) return;
 
-        // we have to inject our button in this tweet parent
-        appendReplyAppToReplyParent(tweetParent);
+        // let's find if the tweet is in a dialog
+
+        let tweetText = "";
+        const tweetButtonDialog = tweetButton.closest('div[role="dialog"]');
+        // if the tweet button is present in a dialog
+        if (tweetButtonDialog) {
+          const showMoreBtn = tweetButtonDialog.querySelector<HTMLElement>(
+            'button[data-testid="tweet-text-show-more-link"]',
+          );
+
+          if (showMoreBtn) {
+            showMoreBtn.click();
+            return;
+          }
+
+          // if the showMore button is still present just return
+          if (showMoreBtn) return;
+          const tweetTextDiv = tweetButtonDialog.querySelector(
+            'div[data-testid="tweetText"]',
+          );
+          if (tweetTextDiv) {
+            tweetText = tweetTextDiv.textContent;
+          }
+        }
+
+        if (!tweetText) {
+          const inlineReplyContainer = tweetButton.closest(
+            'div[data-testid="inline_reply_offscreen"]',
+          );
+          if (inlineReplyContainer) {
+            // if the reply has an inlineReplyContainer
+            const inlineReplyContainerParent =
+              inlineReplyContainer.parentElement;
+            if (inlineReplyContainerParent) {
+              const tweetTextDiv = inlineReplyContainerParent.querySelector(
+                'div[data-testid="tweetText"]',
+              );
+
+              if (tweetTextDiv) {
+                tweetText = tweetTextDiv.textContent;
+              }
+            }
+          }
+        }
+
+        if (!tweetText) {
+          console.log("Tweet Text not found");
+        }
+
+        appendReplyAppToReplyParent(tweetParent, tweetText);
       }
     }
   }
