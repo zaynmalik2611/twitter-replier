@@ -34,7 +34,7 @@ const onMessageReceivedByBackground = (
           const validatedSettings = validateSettings(tweet_replier_settings);
           const { prompt, model, apiUrl } = validatedSettings;
 
-          const resolvedPrompt = prompt.replace(/\$\{tweetText\}/g, tweetText);
+          const resolvedPrompt = prompt.replace("${tweetText}", tweetText);
 
           const resp = await fetch(apiUrl, {
             headers: {
