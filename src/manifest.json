@@ -25,6 +25,7 @@
       "css": ["src/content/content.css"]
     }
   ],
+  "{{chrome}}.permissions": ["storage"],
   "{{chrome}}.host_permissions": ["http://localhost:11434/*"],
   "{{chrome}}.web_accessible_resources": [
     {
