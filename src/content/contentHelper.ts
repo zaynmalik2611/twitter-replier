@@ -20,7 +20,6 @@ const appendReplyAppToReplyParent = (
   replyBtnParent: HTMLElement,
   tweetText: string,
 ) => {
-  console.log("appending reply_app_yayyy");
   if (replyBtnParent.querySelector("#tweet-replier-root")) {
     console.log("cant append button already there");
     return;
@@ -28,6 +27,7 @@ const appendReplyAppToReplyParent = (
 
   replyBtnParent.style.flexDirection = "row";
   replyBtnParent.style.gap = "5px";
+  replyBtnParent.style.opacity = "1";
 
   const rootDiv = document.createElement("div");
   rootDiv.id = "tweet-replier-root";
