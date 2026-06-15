@@ -1,37 +1,54 @@
 import browser from "webextension-polyfill";
 import { chromeActions } from "./constants";
+import { ChromeMessage } from "./types";
 
-interface MessagePayload {
-  action: string;
-  data?: unknown;
-}
+const validateSettings = (settings: {
+  prompt: string;
+  model: string;
+  apiUrl: string;
+}) => {
+  const { prompt, model, apiUrl } = settings;
+  if (!prompt) throw new Error("prompt is required");
+  if (!model) throw new Error("model is required");
+  if (!apiUrl) throw new Error("apiUrl is required");
+
+  return { prompt, model, apiUrl };
+};
 
 const onMessageReceivedByBackground = (
-  message: MessagePayload,
+  message: ChromeMessage,
   sender: browser.Runtime.MessageSender,
   sendResponse: (response?: unknown) => void,
 ): any => {
-  const { action, data } = message;
-  switch (action) {
+  switch (message.action) {
     case chromeActions.GENERATE_REPLY: {
-      const { tweetText } = data;
+      const { tweetText } = message.data;
 
       console.log("hahaha this is in the bg", tweetText);
       // we will send this tweetText to the ai api and get a response
       (async () => {
         try {
-          const resp = await fetch("http://localhost:11434/api/generate", {
+          const { tweet_replier_settings } = await browser.storage.local.get(
+            "tweet_replier_settings",
+          );
+          const validatedSettings = validateSettings(tweet_replier_settings);
+          const { prompt, model, apiUrl } = validatedSettings;
+
+          const resolvedPrompt = prompt.replace(/\$\{tweetText\}/g, tweetText);
+
+          const resp = await fetch(apiUrl, {
             headers: {
               "Content-Type": "application/json",
               Accept: "application/json",
             },
             method: "POST",
             body: JSON.stringify({
-              model: "deepseek-r1:8b",
-              prompt: "Hello",
+              model: model,
+              prompt: resolvedPrompt,
               stream: false,
             }),
           });
+
           const { response } = await resp.json();
 
           sendResponse({
@@ -47,6 +64,13 @@ const onMessageReceivedByBackground = (
         }
       })();
       return true;
+    }
+
+    case chromeActions.GET_TWEET_SENTIMENT: {
+      const { language } = message.data;
+      console.log("language", language);
+      sendResponse({ success: true, sentiment: "positive" });
+      break;
     }
 
     default:
