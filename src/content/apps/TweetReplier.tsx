@@ -16,7 +16,7 @@ function TweetReplier({ tweetText }: TweetReplierProps) {
   const [dots, setDots] = useState(1);
 
   const generateReply = async () => {
-    console.log("i was pressed!!");
+    if (isGenerating) return;
     try {
       setIsGenerating(true);
       const {
@@ -35,7 +35,6 @@ function TweetReplier({ tweetText }: TweetReplierProps) {
         setError(errFromBG);
       }
       setShowReply(true);
-      console.log("the generated reply", reply);
     } catch (error) {
       setError("Some error occurred");
     } finally {
