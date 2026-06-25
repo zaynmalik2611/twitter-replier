@@ -120,3 +120,25 @@
 .save-btn:active {
   transform: scale(0.97);
 }
+
+.nav {
+  display: flex;
+  color: white;
+  justify-content: space-between;
+}
+
+.nav-item {
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 3px;
+}
+
+.nav-item:hover {
+  background: #fff;
+  color: black;
+}
+
+.nav-item-selected {
+  background: #fff;
+  color: black;
+}
