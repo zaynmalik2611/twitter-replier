@@ -40,7 +40,7 @@ const callback = (
             'div[data-testid="tweetText"]',
           );
           if (tweetTextDiv) {
-            tweetText = tweetTextDiv.textContent;
+            tweetText = tweetTextDiv?.textContent || "";
           }
         }
 
@@ -58,7 +58,7 @@ const callback = (
               );
 
               if (tweetTextDiv) {
-                tweetText = tweetTextDiv.textContent;
+                tweetText = tweetTextDiv?.textContent || "";
               }
             }
           }
@@ -66,6 +66,7 @@ const callback = (
 
         if (!tweetText) {
           console.log("Tweet Text not found");
+          return;
         }
 
         appendReplyAppToReplyParent(tweetParent, tweetText);
